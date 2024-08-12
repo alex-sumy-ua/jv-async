@@ -1,3 +1,7 @@
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -69,47 +73,63 @@ public class Main {
 //        System.out.println(combinedFuture.get());
 
 
-        //Step 04
-        Random future1Sleep = new Random();
-        int randomNumber = future1Sleep.nextInt(10000 - 1000) + 1000;
-        Random future2Sleep = new Random();
-        int randomNumber2 = future2Sleep.nextInt(10000 - 1000) + 1000;
+        // Step 04
+//        Random future1Sleep = new Random();
+//        int randomNumber = future1Sleep.nextInt(10000 - 1000) + 1000;
+//        Random future2Sleep = new Random();
+//        int randomNumber2 = future2Sleep.nextInt(10000 - 1000) + 1000;
+//
+//                CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+//            try {
+//
+//                Thread.sleep(randomNumber);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            return "Hello, ";
+//        });
+//        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+//            try {
+//
+//                Thread.sleep(randomNumber2);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            return "World!";
+//        });
+//
+//
+//        try {
+//            CompletableFuture<String> combinedFuture = future1.thenCombine(future2, (s1, s2) -> s1 + s2);
+//            if (randomNumber + randomNumber2 > 10000) {
+//                throw new Exception("Combined sleep time exceeds 10 seconds");
+//
+//            } else {
+//                System.out.println(combinedFuture.get() + "\n" + "Completed after: " + (randomNumber + randomNumber2) / 1000 + " seconds.");
+//            }
+//        }
+//        catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
 
-                CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
-            try {
+        // Step 05**
 
-                Thread.sleep(randomNumber);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return "Hello, ";
-        });
-        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
-            try {
-
-                Thread.sleep(randomNumber2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return "World!";
-        });
-
-
-        try {
-            CompletableFuture<String> combinedFuture = future1.thenCombine(future2, (s1, s2) -> s1 + s2);
-            if (randomNumber + randomNumber2 > 10000) {
-                throw new Exception("Combined sleep time exceeds 10 seconds");
-
-            } else {
-                System.out.println(combinedFuture.get() + "\n" + "Completed after: " + (randomNumber + randomNumber2) / 1000 + " seconds.");
-            }
+        String data = "85671 34262 92143 50984 24515 68356 77247 12348 56789 98760";
+        String[] numbers = data.split(" ");
+        List<BigInteger> dataList = new ArrayList<>();
+        for (String number : numbers) {
+            dataList.add(BigInteger.valueOf(Long.parseLong(number)));
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
 
+        CompletableFuture<List<BigInteger>> future5 = CompletableFuture.supplyAsync(() -> {
+            List dT = new ArrayList<>();
+                    dT = dataList.stream()
+                    .map(n -> {calculateFactorial(n); return n;})
+                    .toList();
+            return dT;
+        });
 
-
+        CompletableFuture future6 = CompletableFuture.
 
 
 
@@ -118,4 +138,14 @@ public class Main {
 
 
     }
+
+    // Step 05**
+    private static BigInteger calculateFactorial(BigInteger num) {
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = BigInteger.ONE; i.compareTo(num) <= 0; i = i.add(BigInteger.ONE)) {
+            result = result.multiply(i);
+        }
+        return result;
+    }
+
 }
