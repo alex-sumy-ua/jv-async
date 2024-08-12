@@ -1,6 +1,8 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -112,91 +114,36 @@ public class Main {
 //            System.out.println(e.getMessage());
 //        }
 
-        // Step 05**
+        // Step 05
 
-        String data = "85671 34262 92143 50984 24515 68356 77247 12348 56789 98760";
-        String[] numbers = data.split(" ");
-        List<BigInteger> dataList = new ArrayList<>();
+        String data = "5 6";//85671 34262 92143 50984 24515 68356 77247 12348 56789 98760";
 
+        List<BigInteger> dataList = Arrays.stream(data.split("\\s+"))
+                .map(BigInteger::new)
+                .toList();
 
-        List<CompletableFuture<BigInteger>> futureFactorials = new ArrayList<>(); // output List
-
+        List<CompletableFuture<BigInteger>> futureFactorials = new ArrayList<>();
         for (BigInteger number : dataList) {
             CompletableFuture<BigInteger> future = CompletableFuture.supplyAsync(() -> calculateFactorial(number));
             futureFactorials.add(future);
         }
 
-//        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureFactorials.toArray(new CompletableFuture[0]));
-//
-//        allFutures.thenApply(v -> {
-//                    return futureFactorials.stream()
-//                            .map(CompletableFuture::join)
-//                            .toList();
-//                })
-//                .thenAccept(factorials -> {
-//                    // Print the results
-//                    System.out.println("Factorials:");
-//                    for (int i = 0; i < dataList.size(); i++) {
-//                        System.out.println(dataList.get(i) + "! = " + factorials.get(i));
-//                        System.out.println("!!!" + dataList.size() + factorials.size());
-//                    }
-//                })
-//                .get();
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureFactorials.toArray(new CompletableFuture[0]));
 
-
-
-//        //Method for parsing string
-//        CompletableFuture<Void> parseString
-//        for (String number : numbers) {
-//            dataList.add(BigInteger.valueOf(Long.parseLong(number)));
-//        }
-//
-//        //Method for printing result
-//        CompletableFuture<Void> printFactorialResults
-//        for (int i = 0; i < dataList.size(); i++) {
-//            System.out.println(calculateFactorial(dataList.get(i)));
-//        }
-
-
-
-
-//        CompletableFuture<List<BigInteger>> future5 = CompletableFuture.supplyAsync(() -> {
-//            List dT = new ArrayList<>();
-//                    dT = dataList.stream()
-//                    .map(n -> {calculateFactorial(n); return n;})
-//                    .toList();
-//            return dT;
-//        });
-
-
-
-
-
-
-//        CompletableFuture<Void> factorials = CompletableFuture.supplyAsync(() -> calculateFactorial(dataList.get(0)))
-//                        .thenApplyAsync()
-//        factorials.thenAccept(result -> System.out.println(result));
-
-
-
-
-
-
+        allFutures.thenApply(v -> {
+            return futureFactorials.stream()
+                    .map(CompletableFuture::join)
+                    .toList();
+        })
+        .thenAccept(factorials -> {
+            System.out.println("Factorials:");
+            for (int i = 0; i < dataList.size(); i++) {
+                System.out.println(dataList.get(i) + "! = " + factorials.get(i));
+            }
+        })
+        .get();
 
     }
-
-    // Step 05**
-
-
-//public static List<BigInteger> getBigIntFromArray(List<BigInteger> dataList) {
-//    CompletableFuture.runAsync(() -> {
-//        List<BigInteger> factorialResults = Stream.of(dataList)
-//                .map(Main::calculateFactorial())
-//                .collect(Collectors.toList());
-//
-//        }
-//    }
-
 
     private static BigInteger calculateFactorial(BigInteger num) {
         BigInteger result = BigInteger.ONE;
@@ -205,5 +152,6 @@ public class Main {
         }
         return result;
     }
+
 
 }
