@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -122,26 +123,33 @@ public class Main {
                 .map(BigInteger::new)
                 .toList();
 
-        List<CompletableFuture<BigInteger>> futureFactorials = new ArrayList<>();
-        for (BigInteger number : dataList) {
-            CompletableFuture<BigInteger> future = CompletableFuture.supplyAsync(() -> calculateFactorial(number));
-            futureFactorials.add(future);
-        }
+        CompletableFuture<Void> factorialFuture = CompletableFuture.supplyAsync(() ->
+                dataList.stream()
+                        .map(Main::calculateFactorial)
+                        .collect(Collectors.toList())
+        ).thenAccept(factorials -> {
+            System.out.println("Factorials computed:");
+            factorials.forEach(System.out::println);
+        });
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureFactorials.toArray(new CompletableFuture[0]));
+        // Step 06
 
-        allFutures.thenApply(v -> {
-            return futureFactorials.stream()
-                    .map(CompletableFuture::join)
-                    .toList();
-        })
-        .thenAccept(factorials -> {
-            System.out.println("Factorials:");
-            for (int i = 0; i < dataList.size(); i++) {
-                System.out.println(dataList.get(i) + "! = " + factorials.get(i));
+        String story = "Mary had a little lamb, its fleece was white as snow.";
+
+        CompletableFuture<Void> wordPrintingFuture = CompletableFuture.runAsync(() -> {
+            String[] words = story.split(" ");
+            for (String word : words) {
+                System.out.println(word);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
-        })
-        .get();
+        });
+
+        CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(factorialFuture, wordPrintingFuture);
+        combinedFuture.join();
 
     }
 
