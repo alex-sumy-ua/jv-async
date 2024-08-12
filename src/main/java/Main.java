@@ -119,17 +119,43 @@ public class Main {
         List<BigInteger> dataList = new ArrayList<>();
 
 
-        //Method for parsing string
-        CompletableFuture<Void> parseString
-        for (String number : numbers) {
-            dataList.add(BigInteger.valueOf(Long.parseLong(number)));
+        List<CompletableFuture<BigInteger>> futureFactorials = new ArrayList<>(); // output List
+
+        for (BigInteger number : dataList) {
+            CompletableFuture<BigInteger> future = CompletableFuture.supplyAsync(() -> calculateFactorial(number));
+            futureFactorials.add(future);
         }
 
-        //Method for printing result
-        CompletableFuture<Void> printFactorialResults
-        for (int i = 0; i < dataList.size(); i++) {
-            System.out.println(calculateFactorial(dataList.get(i)));
-        }
+//        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureFactorials.toArray(new CompletableFuture[0]));
+//
+//        allFutures.thenApply(v -> {
+//                    return futureFactorials.stream()
+//                            .map(CompletableFuture::join)
+//                            .toList();
+//                })
+//                .thenAccept(factorials -> {
+//                    // Print the results
+//                    System.out.println("Factorials:");
+//                    for (int i = 0; i < dataList.size(); i++) {
+//                        System.out.println(dataList.get(i) + "! = " + factorials.get(i));
+//                        System.out.println("!!!" + dataList.size() + factorials.size());
+//                    }
+//                })
+//                .get();
+
+
+
+//        //Method for parsing string
+//        CompletableFuture<Void> parseString
+//        for (String number : numbers) {
+//            dataList.add(BigInteger.valueOf(Long.parseLong(number)));
+//        }
+//
+//        //Method for printing result
+//        CompletableFuture<Void> printFactorialResults
+//        for (int i = 0; i < dataList.size(); i++) {
+//            System.out.println(calculateFactorial(dataList.get(i)));
+//        }
 
 
 
